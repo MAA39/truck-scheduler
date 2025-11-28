@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // ppr: true, // Partial Pre-Rendering - 有効にする場合
   },
-  transpilePackages: ['@repo/shared', '@repo/ui'],
+  transpilePackages: ['@repo/shared', '@repo/ui', '@repo/auth'],
 }
 
 export default nextConfig
