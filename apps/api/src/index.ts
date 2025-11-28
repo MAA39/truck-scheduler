@@ -2,13 +2,20 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
+import { auth } from '@repo/auth'
 import type { Driver, Truck, Reservation } from '@repo/shared/types'
 
 const app = new Hono()
 
 // Middleware
 app.use('*', logger())
-app.use('*', cors())
+app.use(
+  '*',
+  cors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  })
+)
 
 // Health check
 app.get('/', (c) => {
@@ -17,6 +24,11 @@ app.get('/', (c) => {
     version: '0.0.1',
     status: 'running',
   })
+})
+
+// Better Auth handler
+app.on(['POST', 'GET'], '/api/auth/**', (c) => {
+  return auth.handler(c.req.raw)
 })
 
 // API Routes
