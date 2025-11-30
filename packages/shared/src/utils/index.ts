@@ -1,41 +1,64 @@
 /**
- * 日付を日本語フォーマットで表示
+ * Format capacity in kg to human readable format
+ * @param capacity - Capacity in kg
+ * @returns Formatted string (e.g., "2,000 kg" or "1.5 t")
  */
-export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('ja-JP', {
+export function formatCapacity(capacity: number): string {
+  if (capacity >= 1000) {
+    const tons = capacity / 1000
+    if (Number.isInteger(tons)) {
+      return `${tons} t`
+    }
+    return `${tons.toFixed(1)} t`
+  }
+  return `${capacity.toLocaleString()} kg`
+}
+
+/**
+ * Format date string to Japanese format
+ * @param dateString - ISO date string (YYYY-MM-DD)
+ * @returns Formatted string (e.g., "2024年12月1日")
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(date)
+  })
 }
 
 /**
- * 日付を YYYY-MM-DD 形式で表示
+ * Format datetime to Japanese format
+ * @param date - Date object or ISO string
+ * @returns Formatted string (e.g., "2024年12月1日 14:30")
  */
-export function formatDateISO(date: Date): string {
-  return date.toISOString().split('T')[0] ?? ''
+export function formatDateTime(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date
+  return d.toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 /**
- * 電話番号をフォーマット（ハイフン区切り）
+ * Generate a simple ID (for client-side only)
+ * @returns Random ID string
  */
-export function formatPhoneNumber(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '')
-  if (cleaned.length === 11) {
-    return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7)}`
-  }
-  if (cleaned.length === 10) {
-    return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`
-  }
-  return phone
+export function generateId(): string {
+  return Math.random().toString(36).substring(2, 15)
 }
 
 /**
- * 積載量を表示用にフォーマット
+ * Truncate text with ellipsis
+ * @param text - Text to truncate
+ * @param maxLength - Maximum length
+ * @returns Truncated text
  */
-export function formatCapacity(kg: number): string {
-  if (kg >= 1000) {
-    return `${(kg / 1000).toFixed(1)}t`
-  }
-  return `${kg}kg`
+export function truncate(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text
+  return text.slice(0, maxLength - 3) + '...'
 }
